@@ -3,7 +3,7 @@
 if [ "$1" = "-d" ] 
    then
    pkill -f consolidar.sh
-   rm -r "EPNr1"
+   rm -r "$HOME/EPNr1"
         exit
 fi
 
@@ -31,11 +31,11 @@ do
 
    case "$opcion" in
 1)
-        mkdir -p EPNr1
-        mkdir -p EPNr1/Entrada
-        mkdir -p EPNr1/Salida
-        mkdir -p EPNr1/procesado
-        touch "EPNr1/Salida/$FILENAME.txt"
+        mkdir -p "$HOME/EPNr1"
+        mkdir -p "$HOME/EPNr1/Entrada"
+        mkdir -p "$HOME/EPNr1/Salida"
+        mkdir -p "$HOME/EPNr1/procesado"
+        touch "$HOME/EPNr1/Salida/$FILENAME.txt"
         mensaje="Entorno generado correctamente"
 clear
         ;;
@@ -46,28 +46,28 @@ if pgrep -f consolidar.sh > /dev/null
     clear
     mensaje="ya hay un proceso corriendo en este momento, si quieres cerrarlos ejecuta la opcion 7"
   else
-        if [ -d "EPNr1" ]
+        if [ -d "$HOME/EPNr1" ]
         then
-             touch EPNr1/consolidar.sh
-             cat > EPNr1/consolidar.sh << finaliza
+             touch "$HOME/EPNr1/consolidar.sh"
+             cat > "$HOME/EPNr1/consolidar.sh" << finaliza
 
 #!/bin/bash
-while [ -d "EPNr1" ]
+while [ -d "$HOME/EPNr1" ]
 do
-for archivo in EPNr1/Entrada/*.txt
+for archivo in "$HOME/EPNr1/Entrada/"*.txt
 do
   if [ -f "\$archivo" ]
   then
-      cat "\$archivo" >> EPNr1/Salida/$FILENAME.txt
-      mv "\$archivo" EPNr1/procesado
-      echo "\$(date '+%d/%m/%Y %H:%M:%S') - Procesado archivo \$(basename "\$archivo")" >> EPNr1/procesado.log 
+      cat "\$archivo" >> "$HOME/EPNr1/Salida/$FILENAME.txt"
+      mv "\$archivo" "$HOME/EPNr1/procesado"
+      echo "\$(date '+%d/%m/%Y %H:%M:%S') - Procesado archivo \$(basename "\$archivo")" >> "$HOME/EPNr1/procesado.log"
   fi
 done
 
 sleep 5
 done
 finaliza
-             bash EPNr1/consolidar.sh &
+             bash "$HOME/EPNr1/consolidar.sh" &
              PID=$! 
              mensaje="El proceso esta corriendo"
         clear
@@ -79,11 +79,13 @@ fi
         ;;
         
 3)
-             if [ -f "EPNr1/Salida/$FILENAME.txt" ]
+             if [ -f "$HOME/EPNr1/Salida/$FILENAME.txt" ]
              then
-             sort -n -t' ' -k1 EPNr1/Salida/$FILENAME.txt
+             clear
+             sort -n -t' ' -k1 "$HOME/EPNr1/Salida/$FILENAME.txt"
+             mensaje=""
              else
-               if [ -d "EPNr1" ]
+               if [ -d "$HOME/EPNr1" ]
                then 
                  mensaje="No se encuentra el archivo necesario en la carpeta Salida" 
                else
@@ -92,11 +94,11 @@ fi
              fi
         ;;
 4)
-             if [ -f EPNr1/Salida/$FILENAME.txt ]
+             if [ -f "$HOME/EPNr1/Salida/$FILENAME.txt" ]
              then
-             sort -nr -t' ' -k5 EPNr1/Salida/$FILENAME.txt | head
+             sort -nr -t' ' -k5 "$HOME/EPNr1/Salida/$FILENAME.txt" | head
              else
-               if [ -d "EPNr1" ]
+               if [ -d "$HOME/EPNr1" ]
                then 
                  mensaje="No se encuentra el archivo necesario en la carpeta Salida" 
                else
@@ -105,14 +107,14 @@ fi
              fi
         ;;
 5)
-if [ -f EPNr1/Salida/$FILENAME.txt ]
+if [ -f "$HOME/EPNr1/Salida/$FILENAME.txt" ]
   then
         clear
         echo -n "Ingrese el padron que esta buscando: "
         read padron
-        grep  "^$padron " "EPNr1/Salida/$FILENAME.txt"
+        grep  "^$padron " "$HOME/EPNr1/Salida/$FILENAME.txt"
   else
-    if [ -d "EPNr1" ]
+    if [ -d "$HOME/EPNr1" ]
              then 
                  mensaje="No se encuentra el archivo necesario en la carpeta Salida" 
              else
@@ -121,10 +123,10 @@ if [ -f EPNr1/Salida/$FILENAME.txt ]
 fi
         ;;
 6)
-if [ -f EPNr1/procesado.log ]
+if [ -f "$HOME/EPNr1/procesado.log" ]
   then 
         clear
-        cat EPNr1/procesado.log
+        cat "$HOME/EPNr1/procesado.log"
   else
         clear
         mensaje="no se encontro el archivo"
@@ -138,6 +140,7 @@ if [ -n "$PID" ] || [ -n "$Procesos" ]
 then
         if [ -n "$Procesos" ]
            then
+             respuesta=""L
              while [ "$respuesta" != "Y" ] && [ "$respuesta" != "N" ]
              do
                echo "Existen procesos antiguos que siguen corriendo, los quiere cerrar?"
